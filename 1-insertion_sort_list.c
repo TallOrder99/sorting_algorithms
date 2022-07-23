@@ -1,82 +1,87 @@
 #include "sort.h"
-
+void display(listint_t *);
+void exchangeData(listint_t *, listint_t *);
 /**
- * insertion_sort_list - This function sorts a doubly linked
- * list of integers in ascending order using the Insertion sort algorithm.
- * @list: The list.
+ * insertion_sort_list - sorts a doubly linked list of integers in
+ * ascending order using the Insertion sort algorithm
+ * @list: DLL list
  *
- * Return: Nothing.
  **/
 void insertion_sort_list(listint_t **list)
 {
-	listint_t *temp;
-	int c;
+	listint_t *cur_list;
 
-	if (!list || !*list)
+	if ((list == NULL) || (*list == NULL) || ((*list)->next == NULL))
 		return;
-	temp = *list;
-	while (temp->next)
+	cur_list = (*list);
+
+	while (cur_list->next != NULL)
 	{
-		c = 1;
-		if (temp->n > temp->next->n)
+		if (cur_list->n > cur_list->next->n)
+			exchangeData(cur_list, (*list));
+		else
+			cur_list = cur_list->next;
+	}
+	while ((*list)->prev != NULL)
+		*list = (*list)->prev;
+}
+/**
+ * display - display ddl list
+ * @head: list fo dll node
+ */
+void display(listint_t *head)
+{
+	listint_t *trav;
+
+	trav = head;
+	while (trav->prev != NULL)
+		trav = trav->prev;
+	print_list(trav);
+
+}
+/**
+ * exchangeData - Exchange two nodes tail and head position
+ * @list: list
+ * @temp: temp list
+ **/
+void exchangeData(listint_t *list, listint_t *temp)
+{
+	temp = list->prev;
+	if (temp != NULL)
+	{
+		temp->next = list->next;
+		list->next->prev = temp;
+	}
+	else
+		list->next->prev = NULL;
+	list->prev = list->next;
+	if (list->next->next != NULL)
+	{
+		list->next = list->next->next;
+		list->prev->next = list;
+		list->next->prev = list;
+	}
+	else
+	{
+		list->next->next = list;
+		list->next = NULL;
+	}
+	display(list);
+	while (list->prev != NULL)
+	{
+		if (list->n < list->prev->n)
 		{
-			if(!temp->prev)
-			{
-				if (!temp->next->next)
-				{
-					temp->next->next = temp;
-					temp->next->prev = NULL;
-					temp->prev = temp->next;
-					temp->next = NULL;
-				}
-				else
-				{
-					temp->next = temp->next->next;
-					temp->next->prev->next = temp;
-					temp->next->prev->prev = NULL;
-					temp->prev = temp->next->prev;
-					temp->next->prev = temp;
-				}
-				*list = temp->prev;
-				temp = temp->prev;
-			}
-			else if ((temp->next->next) && (temp->prev))
-			{
-				temp->prev->next = temp->next;
-				temp->next->prev = temp->prev;
-				temp->next->next->prev = temp;
-				temp->next = temp->next->next;
-				temp->prev->next->next = temp;
-				temp->prev = temp->prev->next;
-				temp = temp->prev;
-				if (temp->prev->n > temp->n)
-				{
-					if (temp->prev->prev)
-						temp = temp->prev->prev;
-					else
-					{
-						temp = temp->prev;
-						c = 2;
-					}
-				}
-			}
-			else
-			{
-				temp->prev->next = temp->next;
-				temp->next->next = temp;
-				temp->next->prev = temp->prev;
-				temp->prev = temp->next;
-				temp->next = NULL;
-				temp = temp->prev;
-				if (temp->prev->n > temp->n)
-				{
-					if (temp->prev->prev)
-						temp = temp->prev->prev;
-				}
-			}
-			print_list(*list);
+			temp = list->prev->prev;
+			list->prev->next = list->next;
+			list->next = list->prev;
+			list->prev->prev = list;
+			list->prev = temp;
+			list->next->next->prev = list->next;
+			if (temp != NULL)
+				temp->next = list;
+			display(list);
 		}
-		if (c == 1)
-			temp = temp->next;
+		else
+			list = list->prev;
 	}
 }
