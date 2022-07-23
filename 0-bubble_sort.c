@@ -1,38 +1,47 @@
 #include "sort.h"
-
+void exchange(int *, int, int);
 /**
- * bubble_sort - This function sorts an array of integers in ascending
- * order using the Bubble sort algorithm.
- * @array: The array that is ordered.
- * @size: The size of the array.
- *
- * Return: Nothing.
- **/
+ * bubble_sort - sorts an array of integers in ascending order
+ * @array: list of an integer array elements
+ * @size: size of an array
+ */
 void bubble_sort(int *array, size_t size)
 {
-	size_t total_times, position_value;
-	int container = 0;
+	unsigned int i, j, l, flag = 0;
 
-	if (!array || !size || size < 2)
+	if (array != NULL || size != 0)
 	{
-		return;
-	}
-
-	total_times = 0;
-	while (total_times < size)
-	{
-		position_value = 0;
-		while (position_value < (size - 1))
+		for (i = 0; i < size - 1; i++)
 		{
-			if (array[position_value] > array[position_value + 1])
+			for (j = 0; j < size - 1;  j++)
 			{
-				container = array[position_value];
-				array[position_value] = array[position_value + 1];
-				array[position_value + 1] = container;
-				print_array(array, size);
+				if (array[j] > array[j + 1])
+				{
+					exchange(array, j, j + 1);
+					flag = 1;
+					for (l = 0; l < size - 1; l++)
+					printf("%d, ", array[l]);
+					printf("%d\n", array[size - 1]);
+				}
 			}
-			position_value++;
+			if (flag == 0)
+				break;
 		}
-		total_times++;
 	}
+	else
+		return;
+}
+/**
+ * exchange - swap array elements
+ * @array: list of integer array elements
+ * @start_index: first index value
+ * @next_index: next index
+ */
+void exchange(int *array, int start_index, int next_index)
+{
+	int temp;
+
+	temp = array[start_index];
+	array[start_index] = array[next_index];
+	array[next_index] = temp;
 }
